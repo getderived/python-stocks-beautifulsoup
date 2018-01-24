@@ -9,8 +9,11 @@ import pickle
 import requests
 import os
 
+#style for matpltolib
 style.use('ggplot')
 
+# scrapes tickers for S&P 500 companies
+# TODO: change this to FTSE 100
 def save_sp500_tickers():
 	resp = requests.get('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
 	soup = bs.BeautifulSoup(resp.text, "lxml")
@@ -27,8 +30,9 @@ def save_sp500_tickers():
 
 	return tickers
 
+# Fetches data from yahoo based on tickers in directory
+# TODO: change to FTSE 100
 def get_data_from_yahoo(reload_sp500 = False):
-
 	if reload_sp500:
 		tickers = save_sp500_tickers()
 	else:
@@ -38,9 +42,11 @@ def get_data_from_yahoo(reload_sp500 = False):
 	if not os.path.exists('stock_dfs'):
 		os.makedirs('stock_dfs')
 
+	# specify dates
 	start = dt.datetime(2000, 1, 1)
 	end = dt.datetime(2018, 1, 1)
 
+	# check whether ticker exists before fetcing them
 	for ticker in tickers:
 		print(ticker)
 		if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
@@ -50,8 +56,10 @@ def get_data_from_yahoo(reload_sp500 = False):
 		else:
 			print('Already have {}'.format(ticker))
 
+# uncomment this to fetch data
 #get_data_from_yahoo()
 
+# compiles data for Heat Map
 def compile_data():
 	with open("sp500tickers.pickle", "rb") as f:
 		tickers = pickle.load(f)
@@ -78,8 +86,9 @@ def compile_data():
 
 #compile_data()
 
+# Heatmap for stock correlation
+# Optional only
 def visualize_data():
-
 	df = pd.read_csv('sp500_joined_closes.csv')
 	#df['AAPL'].plot()
 	#plt.show()
@@ -109,4 +118,4 @@ def visualize_data():
 	plt.show()
 
 
-visualize_data()
+#visualize_data()
